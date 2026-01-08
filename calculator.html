@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
+        nav { margin-bottom: 20px; }
+        nav a { margin: 0 10px; text-decoration: none; color: #4CAF50; }
+        nav a:hover { text-decoration: underline; }
+        input, select { margin: 10px; padding: 8px; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        #result { margin-top: 20px; font-size: 18px; }
+        #logout { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a> |
+        <a href="login.html">Login</a> |
+        <a href="register.html">Register</a> |
+        <a href="calculator.html">Calculator</a>
+    </nav>
+    <h1>BMI Calculator</h1>
+    <p id="userGreeting"></p>
+    <p>Enter your weight and height to calculate your BMI.</p>
+    
+    <label for="weight">Weight:</label>
+    <input type="number" id="weight" placeholder="e.g., 70" min="1" required>
+    <select id="weightUnit">
+        <option value="kg">kg</option>
+        <option value="lbs">lbs</option>
+    </select><br>
+    
+    <label for="height">Height:</label>
+    <input type="number" id="height" placeholder="e.g., 170" min="1" required>
+    <select id="heightUnit">
+        <option value="cm">cm</option>
+        <option value="inches">inches</option>
+    </select><br>
+    
+    <button onclick="calculateBMI()">Calculate BMI</button>
+    
+    <div id="result"></div>
+    <button id="logout" onclick="logout()">Logout</button>
+    
+    <script>
+        // Check if logged in
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            alert('Please log in first.');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('userGreeting').innerHTML = `Welcome, ${loggedInUser}!`;
+        }
+        
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const weightUnit = document.getElementById('weightUnit').value;
+            const heightUnit = document.getElementById('heightUnit').value;
+            
+            if (!weight || !height) {
+                document.getElementById('result').innerHTML = 'Please enter valid weight and height.';
+                return;
+            }
+            
+            // Convert to metric if needed
+            let weightKg = weightUnit === 'lbs' ? weight * 0.453592 : weight;
+            let heightM = heightUnit === 'inches' ? height * 0.0254 : height / 100;
+            
+            const bmi = (weightKg / (heightM * heightM)).toFixed(2);
+            
+            let category = '';
+            if (bmi < 18.5) category = 'Underweight';
+            else if (bmi < 25) category = 'Normal weight';
+            else if (bmi < 30) category = 'Overweight';
+            else category = 'Obese';
+            
+            document.getElementById('result').innerHTML = `Your BMI is ${bmi}. Category: ${category}.`;
+        }
+        
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
